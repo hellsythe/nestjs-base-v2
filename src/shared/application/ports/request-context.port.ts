@@ -1,0 +1,4 @@
+export abstract class RequestContextPort {
+  abstract getRequestId(): string | undefined;
+  abstract get<T = any>(key: string): T | undefined;
+}

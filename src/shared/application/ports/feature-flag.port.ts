@@ -1,0 +1,3 @@
+export abstract class FeatureFlagPort {
+  abstract isEnabled(flag: string, context?: string): Promise<boolean>;
+}

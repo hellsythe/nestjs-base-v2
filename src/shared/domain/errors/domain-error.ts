@@ -1,0 +1,10 @@
+export abstract class DomainError extends Error {
+  /**
+   * Tipo RFC 7807 (URI)
+   */
+  abstract readonly type: string;
+
+  protected constructor(message: string) {
+    super(message);
+  }
+}

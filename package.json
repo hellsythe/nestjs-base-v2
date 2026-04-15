@@ -1,0 +1,55 @@
+{
+  "name": "ia-local-package",
+  "version": "0.2.0",
+  "description": "Reusable shared code and project bootstrap for ia-test",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "rm -rf dist",
+    "prepack": "npm run clean && npm run build"
+  },
+  "bin": {
+    "ia-opencode-install": "bin/install-skills.js",
+    "ia-skills-install": "bin/install-skills.js",
+    "ia-containers-install": "bin/install-containers.js",
+    "ia-observability-install": "bin/install-observability.js",
+    "ia-nest-clean-demo": "bin/clean-nest-demo.js",
+    "ia-shared-cleanup": "bin/clean-shared.js",
+    "ia-env-install": "bin/install-env.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./shared/*": {
+      "types": "./dist/shared/*.d.ts",
+      "default": "./dist/shared/*.js"
+    }
+  },
+  "peerDependencies": {
+    "@nestjs/axios": "^4.0.0",
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/config": "^4.0.0",
+    "@nestjs/core": "^11.0.0",
+    "@nestjs/mongoose": "^11.0.0",
+    "@nestjs/swagger": "^11.0.0",
+    "@nestjs/terminus": "^11.0.0",
+    "mongoose": "^8.0.0",
+    "nestjs-pino": "^4.0.0",
+    "pino": "^10.0.0",
+    "unleash-client": "^6.0.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.7",
+    "typescript": "^5.7.3"
+  },
+  "files": [
+    "dist",
+    "bin",
+    "stubs"
+  ]
+}

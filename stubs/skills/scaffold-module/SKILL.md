@@ -1,0 +1,69 @@
+---
+name: scaffold-module
+description: Orquesta la creación completa de un módulo NestJS usando las skills internas del proyecto.
+---
+
+# Cuándo usar esta skill
+Usar esta skill cuando:
+- El usuario pida crear un módulo completo desde cero.
+- Se requiera scaffolding completo de un recurso nuevo.
+- Se necesite generar varias partes del módulo en una sola tarea.
+- Se invoque el comando `/module`.
+
+# Cuándo no usar esta skill
+No usar esta skill cuando:
+- Solo se necesita agregar un endpoint puntual.
+- Solo se necesita modificar la entidad.
+- Solo se necesita agregar un filtro o un caso de uso específico.
+- El trabajo afecta una sola capa y no requiere scaffolding completo.
+
+# Objetivo
+Crear un módulo completo siguiendo la arquitectura del proyecto.
+
+# Proceso obligatorio
+1. Usar `create-module`.
+2. Usar `create-entity`.
+3. Usar `add-audit-fields`.
+4. Usar `create-repository`.
+5. Usar `create-mongoose-schema`.
+6. Usar `create-mapper`.
+7. Usar `create-use-cases`.
+8. Usar `create-controller`.
+
+# Alcance mínimo de CRUD
+- El scaffolding debe incluir como mínimo:
+  - `create`
+  - `findAll`
+  - `findById`
+  - `update`
+  - `delete` (soft delete cuando aplique)
+
+# Reglas
+- No omitir pasos.
+- Mantener consistencia de nombres.
+- Usar ingles en nombres de modulo, clases, archivos, rutas y propiedades (ej: `students`, `enrollment`, `updatedBy`).
+- No generar nombres en espanol.
+- Respetar `AGENTS.md`.
+- No crear archivos fuera del scaffolding del proyecto.
+- Si hay integración externa, crear puerto en `application/ports` y adapter en infraestructura según protocolo.
+- Los controllers y DTOs generados deben incluir validación con `class-validator` y documentación con `@nestjs/swagger`.
+- Las respuestas HTTP deben mapearse con presenter en `infrastructure/http/presenters`.
+- Los casos de uso generados deben exponer método público `execute`.
+- Escrituras usan `Command` tipado y lecturas usan `Query` tipada.
+- Los DTOs de response con Swagger viven en `infrastructure/http/controllers/dto` y no en `application`.
+- El repositorio debe exponer token de inyección con `Symbol` (ej. `ALUMNO_REPOSITORY`) y usarse en `@Inject(...)` dentro de los casos de uso.
+- En `domain`, los archivos van directos (ej: `domain/alumno.entity.ts`, `domain/alumno.repository.ts`) sin carpetas `entities` ni `repositories`.
+- La persistencia Mongo debe vivir en `infrastructure/persistence/mongo` (schema y repository).
+- El nombre del repository Mongo debe seguir `<entidad>.mongo.repository.ts`.
+- No crear carpeta `infrastructure/repositories`.
+
+# Ejemplo mínimo
+- Módulo `users` con escritura y lectura básica:
+  1. `create-module`
+  2. `create-entity`
+  3. `add-audit-fields`
+  4. `create-repository`
+  5. `create-mongoose-schema` (si persiste en Mongo)
+  6. `create-mapper`
+  7. `create-use-cases` (`CreateUserCommand`, `GetUsersQuery`)
+  8. `create-controller` (`POST /users`, `GET /users`)

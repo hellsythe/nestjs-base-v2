@@ -1,0 +1,5 @@
+export abstract class LoggerPort {
+  abstract info(message: string, meta?: Record<string, any>): void;
+  abstract warn(message: string, meta?: Record<string, any>): void;
+  abstract error(message: string, meta?: Record<string, any>): void;
+}
