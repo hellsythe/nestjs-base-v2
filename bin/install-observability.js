@@ -37,6 +37,7 @@ const dependencies = [
   'pino',
   'pino-http',
   'pino-pretty',
+  'testcontainers',
   'unleash-client',
 ];
 

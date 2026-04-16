@@ -70,6 +70,7 @@ Crear un módulo completo siguiendo la arquitectura del proyecto.
 - Si se detecta español, renombrar y corregir referencias antes de finalizar.
 - Validar que el repositorio concreto herede de `MongoRepositoryBase` y use `MongoCriteriaBuilder` para `findByCriteria`.
 - Validar que al menos use-cases y controller tengan tests unitarios.
+- Validar que se cumpla el checklist mínimo de `create-unit-tests` o documentar excepciones explícitas.
 
 # Ejemplo mínimo
 - Módulo `users` con escritura y lectura básica:
