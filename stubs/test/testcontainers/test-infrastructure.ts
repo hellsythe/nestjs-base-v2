@@ -1,7 +1,7 @@
 import {
   startDefaultTestInfrastructure,
   type TestInfrastructureRuntime,
-} from 'ia-local-package';
+} from '@aurotek/nestjs-base';
 
 type RuntimeState = {
   runtime?: TestInfrastructureRuntime;

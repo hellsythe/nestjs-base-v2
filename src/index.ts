@@ -1,5 +1,5 @@
 export function packageHealthcheck(): string {
-  return 'ia-local-package ready';
+  return '@aurotek/nestjs-base ready';
 }
 
 export * from './shared/testing/containers';

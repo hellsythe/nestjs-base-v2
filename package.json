@@ -1,6 +1,6 @@
 {
-  "name": "ia-local-package",
-  "version": "0.2.0",
+  "name": "@aurotek/nestjs-base",
+  "version": "1.0.0",
   "description": "Reusable shared code and project bootstrap for ia-test",
   "license": "MIT",
   "main": "dist/index.js",
