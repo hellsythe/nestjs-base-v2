@@ -1,6 +1,6 @@
 {
   "name": "@sdkconsultoria/nestjs-base",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Reusable shared code and project bootstrap for ia-test",
   "license": "MIT",
   "main": "dist/index.js",
