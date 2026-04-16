@@ -1,6 +1,6 @@
 {
   "name": "@sdkconsultoria/nestjs-base",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Reusable shared code and project bootstrap for ia-test",
   "license": "MIT",
   "main": "dist/index.js",
@@ -42,7 +42,7 @@
     "mongoose": "^8.0.0",
     "nestjs-pino": "^4.0.0",
     "pino": "^10.0.0",
-    "testcontainers": "^10.0.0",
+    "testcontainers": "^10.0.0 || ^11.0.0",
     "unleash-client": "^6.0.0"
   },
   "devDependencies": {
