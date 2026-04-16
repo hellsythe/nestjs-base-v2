@@ -1,7 +1,11 @@
-import { GenericContainer, StartedTestContainer, Wait } from 'testcontainers';
+import {
+  GenericContainer,
+  Network,
+  StartedTestContainer,
+  Wait,
+} from 'testcontainers';
 
 import { ContainerOrchestrator } from '../container-orchestrator';
-import { MockServerTestContainer } from '../services/mockserver-test-container';
 import { MongoTestContainer } from '../services/mongo-test-container';
 import { UnleashTestContainer } from '../services/unleash-test-container';
 import type { StartedContainerLike } from '../contracts/started-container-like';
@@ -26,18 +30,6 @@ function toStartedContainerLike(
     getMappedPort: (port: number) => container.getMappedPort(port),
     stop: () => container.stop(),
   };
-}
-
-async function startPostgresForUnleash(): Promise<StartedTestContainer> {
-  return new GenericContainer('postgres:14.19-alpine3.21')
-    .withEnvironment({
-      POSTGRES_DB: 'db',
-      POSTGRES_USER: 'postgres',
-      POSTGRES_PASSWORD: 'unleash',
-    })
-    .withExposedPorts(5432)
-    .withWaitStrategy(Wait.forLogMessage('database system is ready to accept connections'))
-    .start();
 }
 
 function buildBaseEnv(env: Record<string, string>): Record<string, string> {
@@ -89,20 +81,21 @@ export async function startDefaultTestInfrastructure(
     };
   }
 
-  const postgres = await startPostgresForUnleash();
-  const postgresHost = postgres.getHost();
-  const postgresPort = postgres.getMappedPort(5432);
-  const postgresUrl = `postgres://postgres:unleash@${postgresHost}:${postgresPort}/db`;
+  const network = await new Network().start();
 
-  const mockServer = new MockServerTestContainer({
-    startFactory: async () =>
-      toStartedContainerLike(
-        await new GenericContainer('mockserver/mockserver:5.15.0')
-          .withExposedPorts(1080)
-          .withWaitStrategy(Wait.forListeningPorts())
-          .start(),
-      ),
-  });
+  const postgres = await new GenericContainer('postgres:14.19-alpine3.21')
+    .withEnvironment({
+      POSTGRES_DB: 'db',
+      POSTGRES_USER: 'postgres',
+      POSTGRES_PASSWORD: 'unleash',
+    })
+    .withNetwork(network)
+    .withNetworkAliases('unleash-db')
+    .withExposedPorts(5432)
+    .withWaitStrategy(Wait.forLogMessage('database system is ready to accept connections'))
+    .start();
+
+  const postgresUrl = 'postgres://postgres:unleash@unleash-db:5432/db';
 
   const unleash = new UnleashTestContainer({
     startFactory: async () =>
@@ -115,14 +108,16 @@ export async function startDefaultTestInfrastructure(
             DATABASE_SSL: 'false',
             LOG_LEVEL: 'warn',
           })
+          .withNetwork(network)
           .withExposedPorts(4242)
-          .withWaitStrategy(Wait.forHttp('/health', 4242).forStatusCode(200))
+          .withStartupTimeout(180000)
+          .withWaitStrategy(Wait.forListeningPorts())
           .start(),
       ),
     appName: 'ia-test',
   });
 
-  const orchestrator = new ContainerOrchestrator([mongo, mockServer, unleash]);
+  const orchestrator = new ContainerOrchestrator([mongo, unleash]);
   const env = buildBaseEnv(await orchestrator.startAll());
 
   return {
@@ -131,6 +126,7 @@ export async function startDefaultTestInfrastructure(
     stop: async () => {
       await orchestrator.stopAll();
       await postgres.stop();
+      await network.stop();
     },
   };
 }

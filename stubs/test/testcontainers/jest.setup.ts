@@ -1,10 +1,10 @@
 import {
-  startTestInfrastructure,
+  startMongoTestInfrastructure,
   stopTestInfrastructure,
 } from './test-infrastructure';
 
 beforeAll(async () => {
-  await startTestInfrastructure();
+  await startMongoTestInfrastructure();
 }, 180000);
 
 afterAll(async () => {

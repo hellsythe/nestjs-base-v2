@@ -30,6 +30,7 @@ Crear un módulo completo siguiendo la arquitectura del proyecto.
 7. Usar `create-use-cases`.
 8. Usar `create-controller`.
 9. Usar `create-unit-tests`.
+10. Si el usuario pide E2E con BDD, usar `create-cucumber-e2e-tests`.
 
 # Alcance mínimo de CRUD
 - El scaffolding debe incluir como mínimo:
@@ -71,6 +72,7 @@ Crear un módulo completo siguiendo la arquitectura del proyecto.
 - Validar que el repositorio concreto herede de `MongoRepositoryBase` y use `MongoCriteriaBuilder` para `findByCriteria`.
 - Validar que al menos use-cases y controller tengan tests unitarios.
 - Validar que se cumpla el checklist mínimo de `create-unit-tests` o documentar excepciones explícitas.
+- Si se genera Cucumber E2E, validar scripts `test:cucumber` y (si aplica) `test:cucumber:full`.
 
 # Ejemplo mínimo
 - Módulo `users` con escritura y lectura básica:

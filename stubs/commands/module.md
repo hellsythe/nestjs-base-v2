@@ -20,3 +20,5 @@ Tareas:
    - Si detectas nombres en español, corregirlos antes de finalizar.
    - No dar por terminado el comando hasta que la validación pase.
 10. Invocar la skill `create-unit-tests` para cubrir por defecto los archivos generados relevantes.
+11. Si el usuario pide pruebas E2E con Cucumber, invocar `create-cucumber-e2e-tests`.
+12. Si se crean pruebas Cucumber, asegurar scripts `test:cucumber` (base) y `test:cucumber:full` (escenarios `@full` cuando aplique).
