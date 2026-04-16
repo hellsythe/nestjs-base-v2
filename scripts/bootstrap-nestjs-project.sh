@@ -25,7 +25,7 @@ if [ -e "$PROJECT_NAME" ]; then
 fi
 
 printf 'Cloning NestJS starter into "%s"...\n' "$PROJECT_NAME"
-git clone "$TEMPLATE_REPO" "$PROJECT_NAME"
+git clone --depth 1 "$TEMPLATE_REPO" "$PROJECT_NAME"
 
 printf 'Resetting template git history...\n'
 rm -rf "$PROJECT_NAME/.git"
