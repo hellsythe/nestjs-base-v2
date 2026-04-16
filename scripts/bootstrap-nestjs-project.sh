@@ -4,9 +4,9 @@ set -euo pipefail
 
 TEMPLATE_REPO="https://github.com/nestjs/typescript-starter.git"
 PROJECT_NAME="${1:-nestjs-app}"
-PACKAGE_NAME="${2:-@aurotek/nestjs-base@latest}"
+PACKAGE_NAME="${2:-@sdkconsultoria/nestjs-base@latest}"
 NODE_IMAGE="${NODE_IMAGE:-node:20-bookworm}"
-COMMIT_MESSAGE="${COMMIT_MESSAGE:-chore: bootstrap project from Nest starter + @aurotek/nestjs-base}"
+COMMIT_MESSAGE="${COMMIT_MESSAGE:-chore: bootstrap project from Nest starter + @sdkconsultoria/nestjs-base}"
 
 if ! command -v git >/dev/null 2>&1; then
   printf 'Error: git is required but not installed.\n' >&2
@@ -66,7 +66,7 @@ docker run --rm -v "$ABS_PROJECT_PATH:/workspace" -w /workspace "$NODE_IMAGE" ba
 
 printf 'Creating first commit...\n'
 git -C "$PROJECT_NAME" add .
-git -C "$PROJECT_NAME" -c user.name="Aurotek Bootstrap" -c user.email="bootstrap@aurotek.local" commit -m "$COMMIT_MESSAGE" >/dev/null
+git -C "$PROJECT_NAME" -c user.name="SDK Consultoria Bootstrap" -c user.email="bootstrap@sdkconsultoria.local" commit -m "$COMMIT_MESSAGE" >/dev/null
 
 printf '\nDone. Project ready at: %s\n' "$ABS_PROJECT_PATH"
 printf 'Next: cd "%s" && pnpm start:dev\n' "$PROJECT_NAME"

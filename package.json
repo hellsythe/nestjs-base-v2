@@ -1,5 +1,5 @@
 {
-  "name": "@aurotek/nestjs-base",
+  "name": "@sdkconsultoria/nestjs-base",
   "version": "1.0.0",
   "description": "Reusable shared code and project bootstrap for ia-test",
   "license": "MIT",

@@ -1,7 +1,7 @@
 import {
   startDefaultTestInfrastructure,
   type TestInfrastructureRuntime,
-} from '@aurotek/nestjs-base';
+} from '@sdkconsultoria/nestjs-base';
 
 type RuntimeState = {
   runtime?: TestInfrastructureRuntime;
