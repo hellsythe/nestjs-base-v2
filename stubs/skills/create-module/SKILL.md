@@ -1,31 +1,66 @@
 ---
 name: create-module
-description: Crea la estructura base de carpetas y archivos iniciales de un módulo.
+description: Crea la estructura base de carpetas y archivos iniciales de un module.
 ---
 
 # Cuándo usar esta skill
 Usar esta skill cuando:
-- Se esté creando un módulo nuevo.
+- Se esté creando un module nuevo.
 - `scaffold-module` la invoque como parte del flujo principal.
 - Se necesite preparar la estructura base antes de crear archivos internos.
 
 # Cuándo no usar esta skill
 No usar esta skill cuando:
-- El módulo ya existe y solo se agregarán archivos puntuales.
+- El module ya existe y solo se agregarán archivos puntuales.
 - Solo se va a modificar lógica dentro de una capa existente.
 - El cambio es una corrección menor dentro de archivos ya creados.
 
 # Objetivo
-Crear el esqueleto del módulo respetando la arquitectura del proyecto.
+Crear el esqueleto del module respetando la arquitectura del proyecto.
 
 # Salida esperada
 - Carpetas de domain, application e infrastructure.
 - En `domain`, no crear subcarpetas `entities` ni `repositories`; usar archivos directos.
-- Usar nombres en ingles para modulo, archivos y carpetas.
+- Usar nombres en inglés para módulos, archivos y carpetas.
 - En persistencia Mongo, usar `infrastructure/persistence/mongo`.
-- El repositorio Mongo debe seguir el patron `<entidad>.mongo.repository.ts`.
+- El repositorio Mongo debe seguir el patron `<entity>.mongo.repository.ts`.
 - No crear `infrastructure/repositories`.
+- En HTTP, usar estructura fija:
+  - `infrastructure/http/controllers/<module>.controller.ts`
+  - `infrastructure/http/controllers/dto/*.dto.ts`
+  - `infrastructure/http/presenters/<entity>.presenter.ts`
+- Si el módulo tiene filtros de listado, crear `infrastructure/http/controllers/dto/find-<module>-query.dto.ts`.
+- Definir `domain/<entity>.criteria.ts` para filtros del módulo.
+- Definir `infrastructure/persistence/mongo/<entity>.filter-map.ts` para mapear criteria a operadores.
 - Incluir `application/ports` para puertos de integraciones externas.
 - Incluir `infrastructure/http/adapters` cuando el módulo consuma APIs HTTP externas.
 - Archivo principal del módulo NestJS.
 - Base mínima para continuar con las demás skills.
+
+# Plantilla de estructura
+```txt
+<module>/
+  <module>.module.ts
+  domain/
+    <entity>.entity.ts
+    <entity>.criteria.ts
+    <entity>.repository.ts
+  application/
+    use-cases/
+    ports/
+  infrastructure/
+    mappers/
+    persistence/
+      mongo/
+        <entity>.schema.ts
+        <entity>.filter-map.ts
+        <entity>.mongo.repository.ts
+    http/
+      controllers/
+        <module>.controller.ts
+        dto/
+          find-<module>-query.dto.ts
+      presenters/
+        <entity>.presenter.ts
+      adapters/
+```

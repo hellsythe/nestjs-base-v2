@@ -1,5 +1,7 @@
 import type { FilterQuery } from 'mongoose';
 import type {
+  LikeFilterOptions,
+  RangeFilterValue,
   FieldFilterConfig,
   CriteriaFilterMap,
 } from '../../../application/criteria/filter-operator';
@@ -13,9 +15,12 @@ export class MongoCriteriaBuilder {
    * @param criteria - Objeto con los valores a filtrar
    * @param filterMap - Mapa que define qué operador usar para cada campo
    */
-  static build<TCriteria extends Record<string, any>>(
+  static build<
+    TCriteria extends Record<string, any>,
+    TPersistence extends object = object,
+  >(
     criteria: Partial<TCriteria>,
-    filterMap: CriteriaFilterMap<TCriteria>,
+    filterMap: CriteriaFilterMap<TCriteria, TPersistence>,
   ): FilterQuery<any> {
     const filters: FilterQuery<any>[] = [];
 
@@ -60,7 +65,7 @@ export class MongoCriteriaBuilder {
   private static applyOperator(
     field: string,
     value: any,
-    config: FieldFilterConfig,
+    config: FieldFilterConfig<any>,
   ): FilterQuery<any> {
     switch (config.operator) {
       case 'like':
@@ -71,11 +76,23 @@ export class MongoCriteriaBuilder {
           ? { [field]: { $in: value } }
           : {};
 
+      case 'neq':
+        return { [field]: { $ne: value } };
+
+      case 'gt':
+        return { [field]: { $gt: value } };
+
       case 'gte':
         return { [field]: { $gte: value } };
 
+      case 'lt':
+        return { [field]: { $lt: value } };
+
       case 'lte':
         return { [field]: { $lte: value } };
+
+      case 'range':
+        return this.buildRangeFilter(field, value as RangeFilterValue);
 
       case 'equals':
       default:
@@ -85,10 +102,10 @@ export class MongoCriteriaBuilder {
 
   private static buildLikeFilter(
     field: string,
-    value: string,
-    options?: FieldFilterConfig['options'],
+    value: unknown,
+    options?: LikeFilterOptions,
   ): FilterQuery<any> {
-    if (!value || value.trim() === '') {
+    if (typeof value !== 'string' || value.trim() === '') {
       return {};
     }
 
@@ -112,6 +129,34 @@ export class MongoCriteriaBuilder {
     const regex = new RegExp(pattern, caseSensitive ? '' : 'i');
 
     return { [field]: regex };
+  }
+
+  private static buildRangeFilter(
+    field: string,
+    value: RangeFilterValue,
+  ): FilterQuery<any> {
+    if (!value || typeof value !== 'object') {
+      return {};
+    }
+
+    const hasFrom = value.from !== undefined && value.from !== null;
+    const hasTo = value.to !== undefined && value.to !== null;
+
+    if (!hasFrom && !hasTo) {
+      return {};
+    }
+
+    const range: Record<string, unknown> = {};
+
+    if (hasFrom) {
+      range.$gte = value.from;
+    }
+
+    if (hasTo) {
+      range.$lte = value.to;
+    }
+
+    return { [field]: range };
   }
 
   private static escapeRegex(str: string): string {

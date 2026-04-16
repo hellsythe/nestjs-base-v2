@@ -13,23 +13,27 @@ La arquitectura base es hexagonal / limpia.
 - El puerto de integración externa va en `application/ports` (ej: `meta.port.ts`).
 - El adapter concreto va en infraestructura según protocolo:
   - HTTP: `infrastructure/http/adapters` (ej: `meta.adapter.ts`).
-- Usar soft delete cuando el módulo lo requiera.
+- Usar soft delete cuando el module lo requiera.
 - Incluir campos de auditoría cuando aplique:
-  - `created_at`
-  - `updated_at`
-  - `deleted_at`
-  - `created_by`
-  - `updated_by`
+  - `createdAt`
+  - `updatedAt`
+  - `deletedAt`
+  - `createdBy`
+  - `updatedBy`
 
-## Convención sugerida por módulo
-- `domain/entities`
-- `domain/repositories`
+## Convención sugerida por module
+- `domain/<entity>.entity.ts`
+- `domain/<entity>.criteria.ts`
+- `domain/<entity>.repository.ts`
 - `application/use-cases`
 - `application/ports`
-- `application/dto`
-- `infrastructure/persistence/mongoose`
-- `infrastructure/repositories`
+- `infrastructure/mappers`
+- `infrastructure/persistence/mongo/<entity>.schema.ts`
+- `infrastructure/persistence/mongo/<entity>.filter-map.ts`
+- `infrastructure/persistence/mongo/<entity>.mongo.repository.ts`
 - `infrastructure/http/controllers`
+- `infrastructure/http/controllers/dto`
+- `infrastructure/http/presenters`
 - `infrastructure/http/adapters`
 
 ## Reglas de generación

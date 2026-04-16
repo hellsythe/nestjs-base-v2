@@ -19,22 +19,25 @@ No usar esta skill cuando:
 Agregar los campos estándar de auditoría.
 
 # Campos de auditoría
-- created_at
-- updated_at
-- deleted_at
-- created_by
-- updated_by
+- createdAt
+- updatedAt
+- deletedAt
+- createdBy
+- updatedBy
 
 # Reglas
 - Aplicar estos campos en entity, schema y mappers cuando corresponda.
 - Mantener tipos consistentes.
+- En la entidad, los campos de auditoría deben vivir en la interfaz `<Entity>AuditFields`.
+- `<Entity>Primitives` debe extender `<Entity>AuditFields`.
+- En schema Mongoose con nombres camelCase estándar, usar `timestamps: true`.
 
 # Ejemplo mínimo
 ```ts
 // entity
-created_at?: Date; updated_at?: Date; deleted_at?: Date | null;
-created_by?: string | null; updated_by?: string | null;
+createdAt?: Date; updatedAt?: Date; deletedAt?: Date | null;
+createdBy?: string | null; updatedBy?: string | null;
 
 // schema (mongo)
-timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
+timestamps: true
 ```

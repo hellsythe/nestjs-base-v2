@@ -6,12 +6,12 @@ description: Define el contrato del repositorio y la implementación concreta de
 # Cuándo usar esta skill
 Usar esta skill cuando:
 - Se necesite persistir una nueva entidad.
-- Se cree un módulo nuevo con acceso a base de datos.
+- Se cree un module nuevo con acceso a base de datos.
 - Se requiera una abstracción de repositorio alineada con arquitectura limpia.
 
 # Cuándo no usar esta skill
 No usar esta skill cuando:
-- El módulo no tiene persistencia.
+- El module no tiene persistencia.
 - Solo se agrega lógica de aplicación sin tocar acceso a datos.
 - El cambio es únicamente de controller o DTOs.
 
@@ -24,16 +24,20 @@ Crear:
 - El repositorio debe devolver entidades.
 - No devolver DTOs ni schemas.
 - La implementación concreta usa mappers para traducir datos.
-- La implementación concreta debe ubicarse en `infrastructure/persistence/mongo/<entidad>.mongo.repository.ts`.
+- La implementación concreta debe ubicarse en `infrastructure/persistence/mongo/<entity>.mongo.repository.ts`.
 - No crear carpeta `infrastructure/repositories`.
-- Definir el contrato del repositorio directamente en `domain/<entidad>.repository.ts` (sin carpeta `domain/repositories`).
-- El nombre del repositorio, metodos y contratos debe estar en ingles.
+- La implementación concreta debe heredar de `MongoRepositoryBase<SchemaClass, Persistence>`.
+- Debe usar `findOneRaw`, `findManyRaw`, `insertRaw`, `updateByIdRaw`, `softDeleteRaw` de la base siempre que aplique.
+- Debe exponer `findByCriteria(criteria)` y resolverlo con `MongoCriteriaBuilder` + `<entity>.filter-map.ts`.
+- Definir el contrato del repositorio directamente en `domain/<entity>.repository.ts` (sin carpeta `domain/repositories`).
+- El nombre del repositorio, metodos y contratos debe estar en inglés.
 - Definir token de inyección con `Symbol` en el archivo de contrato del repositorio, por ejemplo:
   - `export const USER_REPOSITORY = Symbol('USER_REPOSITORY');`
-- El token debe inyectarse en casos de uso con `@Inject(USER_REPOSITORY)` y enlazarse en el módulo con `provide/useExisting`.
-- En módulos CRUD, el contrato debe incluir como mínimo:
+- El token debe inyectarse en casos de uso con `@Inject(USER_REPOSITORY)` y enlazarse en el module con `provide/useExisting`.
+- En modules CRUD, el contrato debe incluir como mínimo:
   - `save(entity)`
   - `findAll()`
+  - `findByCriteria(criteria)`
   - `findById(id)`
   - `update(entity)` o `updateById(id, partial)`
   - `delete(id)` (soft delete cuando aplique)
@@ -46,5 +50,32 @@ export const USER_REPOSITORY = Symbol('USER_REPOSITORY');
 export interface UserRepository {
   save(user: User): Promise<User>;
   findAll(): Promise<User[]>;
+}
+```
+
+# Golden template (mongo repository)
+```ts
+@Injectable()
+export class MongoUserRepository
+  extends MongoRepositoryBase<UserSchemaClass, UserPersistence>
+  implements UserRepository
+{
+  constructor(
+    @InjectModel(UserSchemaClass.name)
+    userModel: Model<UserSchemaClass>,
+    private readonly userMapper: UserMapper,
+  ) {
+    super(userModel);
+  }
+
+  async findByCriteria(criteria: UserCriteria): Promise<User[]> {
+    const filter = MongoCriteriaBuilder.build<UserCriteria, UserPersistence>(
+      criteria,
+      USER_FILTER_MAP,
+    );
+
+    const raw = await this.findManyRaw(filter);
+    return raw.map((item) => this.userMapper.toDomain(item));
+  }
 }
 ```
