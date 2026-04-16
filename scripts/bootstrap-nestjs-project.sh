@@ -7,6 +7,7 @@ PROJECT_NAME="${1:-nestjs-app}"
 PACKAGE_NAME="${2:-@sdkconsultoria/nestjs-base@latest}"
 NODE_IMAGE="${NODE_IMAGE:-node:20-bookworm}"
 COMMIT_MESSAGE="${COMMIT_MESSAGE:-chore: bootstrap project from Nest starter + @sdkconsultoria/nestjs-base}"
+BOOTSTRAP_COMMIT_MESSAGE="${BOOTSTRAP_COMMIT_MESSAGE:-chore: apply @sdkconsultoria/nestjs-base bootstrap}"
 
 if ! command -v git >/dev/null 2>&1; then
   printf 'Error: git is required but not installed.\n' >&2
@@ -61,12 +62,35 @@ docker run --rm -v "$ABS_PROJECT_PATH:/workspace" -w /workspace "$NODE_IMAGE" ba
     fs.writeFileSync(path, JSON.stringify(pkg, null, 2) + "\\n");
   '
 
-  pnpm run project:bootstrap
 "
 
 printf 'Creating first commit...\n'
 git -C "$PROJECT_NAME" add .
 git -C "$PROJECT_NAME" -c user.name="SDK Consultoria Bootstrap" -c user.email="bootstrap@sdkconsultoria.local" commit -m "$COMMIT_MESSAGE" >/dev/null
+
+printf 'Running @sdkconsultoria/nestjs-base bootstrap commands...\n'
+docker run --rm -v "$ABS_PROJECT_PATH:/workspace" -w /workspace "$NODE_IMAGE" bash -lc "
+  set -euo pipefail
+  corepack enable
+  corepack prepare pnpm@latest --activate
+
+  pnpm exec ia-opencode-install
+  pnpm exec ia-containers-install
+  pnpm exec ia-env-install
+  pnpm exec ia-observability-install
+  pnpm exec ia-testcontainers-install
+  pnpm exec ia-git-hooks-install
+  pnpm exec ia-nest-clean-demo
+  pnpm exec ia-shared-cleanup
+"
+
+if ! git -C "$PROJECT_NAME" diff --quiet || ! git -C "$PROJECT_NAME" diff --cached --quiet; then
+  printf 'Creating bootstrap commit...\n'
+  git -C "$PROJECT_NAME" add .
+  git -C "$PROJECT_NAME" -c user.name="SDK Consultoria Bootstrap" -c user.email="bootstrap@sdkconsultoria.local" commit -m "$BOOTSTRAP_COMMIT_MESSAGE" >/dev/null
+else
+  printf 'No bootstrap changes detected after first commit.\n'
+fi
 
 printf '\nDone. Project ready at: %s\n' "$ABS_PROJECT_PATH"
 printf 'Next: cd "%s" && pnpm start:dev\n' "$PROJECT_NAME"
