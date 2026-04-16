@@ -15,9 +15,11 @@
     "ia-skills-install": "bin/install-skills.js",
     "ia-containers-install": "bin/install-containers.js",
     "ia-observability-install": "bin/install-observability.js",
+    "ia-testcontainers-install": "bin/install-testcontainers.js",
     "ia-nest-clean-demo": "bin/clean-nest-demo.js",
     "ia-shared-cleanup": "bin/clean-shared.js",
-    "ia-env-install": "bin/install-env.js"
+    "ia-env-install": "bin/install-env.js",
+    "ia-git-hooks-install": "bin/install-git-hooks.js"
   },
   "exports": {
     ".": {
@@ -40,11 +42,13 @@
     "mongoose": "^8.0.0",
     "nestjs-pino": "^4.0.0",
     "pino": "^10.0.0",
+    "testcontainers": "^10.0.0",
     "unleash-client": "^6.0.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
     "@types/node": "^22.10.7",
+    "testcontainers": "^10.28.0",
     "typescript": "^5.7.3"
   },
   "files": [

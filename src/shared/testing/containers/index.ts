@@ -6,3 +6,4 @@ export * from './services/mongo-test-container';
 export * from './services/mockserver-test-container';
 export * from './services/unleash-test-container';
 export * from './container-orchestrator';
+export * from './testcontainers/testcontainers-infrastructure';
