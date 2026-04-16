@@ -24,6 +24,7 @@ Generar una suite E2E con Cucumber que pruebe el módulo de forma realista y man
 - Los escenarios deben cubrir happy path y errores relevantes.
 - Evitar pasos ambiguos o demasiado genéricos.
 - Reutilizar `test/testcontainers/test-infrastructure.ts` para arrancar contenedores.
+- El helper `test/testcontainers/test-infrastructure.ts` debe importar infraestructura base desde `@sdkconsultoria/nestjs-base`.
 - Para escenarios E2E del módulo (CRUD API), usar `startMongoTestInfrastructure()`.
 - Para escenarios de integración completa, usar `startFullTestInfrastructure()` y etiquetar escenarios con `@full`.
 - Los steps no deben duplicar lógica de negocio; deben ejercer la API HTTP.

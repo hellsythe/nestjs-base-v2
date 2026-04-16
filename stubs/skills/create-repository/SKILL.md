@@ -29,6 +29,7 @@ Crear:
 - La implementación concreta debe heredar de `MongoRepositoryBase<SchemaClass, Persistence>`.
 - Debe usar `findOneRaw`, `findManyRaw`, `insertRaw`, `updateByIdRaw`, `softDeleteRaw` de la base siempre que aplique.
 - Debe exponer `findByCriteria(criteria)` y resolverlo con `MongoCriteriaBuilder` + `<entity>.filter-map.ts`.
+- Las bases `MongoRepositoryBase` y `MongoCriteriaBuilder` deben importarse desde `@sdkconsultoria/nestjs-base/shared/infrastructure/persistence/mongo/...`.
 - Definir el contrato del repositorio directamente en `domain/<entity>.repository.ts` (sin carpeta `domain/repositories`).
 - El nombre del repositorio, metodos y contratos debe estar en inglés.
 - Definir token de inyección con `Symbol` en el archivo de contrato del repositorio, por ejemplo:
@@ -55,6 +56,9 @@ export interface UserRepository {
 
 # Golden template (mongo repository)
 ```ts
+import { MongoCriteriaBuilder } from '@sdkconsultoria/nestjs-base/shared/infrastructure/persistence/mongo/mongo-criteria.builder';
+import { MongoRepositoryBase } from '@sdkconsultoria/nestjs-base/shared/infrastructure/persistence/mongo/mongo.repository.base';
+
 @Injectable()
 export class MongoUserRepository
   extends MongoRepositoryBase<UserSchemaClass, UserPersistence>

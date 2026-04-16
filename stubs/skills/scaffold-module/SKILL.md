@@ -59,6 +59,8 @@ Crear un módulo completo siguiendo la arquitectura del proyecto.
 - La persistencia Mongo debe vivir en `infrastructure/persistence/mongo` (schema y repository).
 - El nombre del repository Mongo debe seguir `<entity>.mongo.repository.ts`.
 - No crear carpeta `infrastructure/repositories`.
+- Todas las bases shared deben importarse desde `@sdkconsultoria/nestjs-base` (ej: `@sdkconsultoria/nestjs-base/shared/...`).
+- No usar `src/shared` local para utilidades base del framework.
 - La capa HTTP debe seguir esta estructura:
   - `infrastructure/http/controllers/<module>.controller.ts`
   - `infrastructure/http/controllers/dto/*.dto.ts`
