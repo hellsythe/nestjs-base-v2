@@ -1,5 +1,10 @@
 import { FilterQuery, Model, UpdateQuery } from 'mongoose';
 
+import { PaginationOptions } from '../../../application/pagination/pagination.options';
+import { PaginationNormalizer } from '../../../application/pagination/pagination.normalizer';
+import { PaginationResultFactory } from '../../../application/pagination/pagination-result.factory';
+import { PaginationResult } from '../../../application/pagination/pagination.result';
+
 export interface MongoPaginationParams {
   offset: number;
   limit: number;
@@ -104,6 +109,23 @@ export abstract class MongoRepositoryBase<TSchema, TPersistence> {
     const data = await query.lean<TPersistence[]>().exec();
 
     return { data, total };
+  }
+
+  protected async findPaginatedResultRaw(
+    filter: FilterQuery<TSchema>,
+    options?: PaginationOptions,
+    sort?: MongoSortParams,
+  ): Promise<PaginationResult<TPersistence>> {
+    const normalized = PaginationNormalizer.normalize(options);
+
+    const pagination: MongoPaginationParams = {
+      offset: normalized.offset,
+      limit: normalized.limit,
+    };
+
+    const { data, total } = await this.findPaginatedRaw(filter, pagination, sort);
+
+    return PaginationResultFactory.create(data, total, normalized);
   }
 
   /* =====================================================

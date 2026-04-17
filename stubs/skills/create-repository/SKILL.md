@@ -42,6 +42,7 @@ Crear:
   - `findById(id)`
   - `update(entity)` o `updateById(id, partial)`
   - `delete(id)` (soft delete cuando aplique)
+- Si el usuario pide paginación, agregar contrato paginado (ej: `findByCriteriaPaginated(criteria, options)`) y usar `findPaginatedResultRaw(...)` en la implementación.
 
 # Ejemplo mínimo
 ```ts

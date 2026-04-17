@@ -7,9 +7,29 @@ import { RequestContextAdapter } from './request-context.adapter';
 export class RequestContextMiddleware implements NestMiddleware {
   constructor(private readonly context: RequestContextAdapter) {}
 
-  use(req: Request, _: Response, next: NextFunction): void {
-    const requestId = req.headers['x-request-id']?.toString() ?? randomUUID();
-    req.headers['x-request-id'] = requestId;
-    this.context.runWithRequestId(requestId, next);
+  use(req: Request, res: Response, next: NextFunction): void {
+    const transactionId = req.headers['x-request-id']?.toString() ?? randomUUID();
+    req.headers['x-request-id'] = transactionId;
+
+    res.setHeader('x-request-id', transactionId);
+    res.setHeader('x-transaction-id', transactionId);
+
+    const originalJson = res.json.bind(res);
+    res.json = ((body: unknown) => {
+      if (!body || typeof body !== 'object' || Array.isArray(body)) {
+        return originalJson(body);
+      }
+
+      if ('transactionId' in (body as Record<string, unknown>)) {
+        return originalJson(body);
+      }
+
+      return originalJson({
+        ...(body as Record<string, unknown>),
+        transactionId,
+      });
+    }) as Response['json'];
+
+    this.context.runWithRequestId(transactionId, next);
   }
 }

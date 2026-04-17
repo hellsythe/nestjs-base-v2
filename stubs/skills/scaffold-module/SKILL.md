@@ -31,6 +31,7 @@ Crear un módulo completo siguiendo la arquitectura del proyecto.
 8. Usar `create-controller`.
 9. Usar `create-unit-tests`.
 10. Si el usuario pide E2E con BDD, usar `create-cucumber-e2e-tests`.
+11. Si el usuario pide paginación en listados, usar `create-pagination`.
 
 # Alcance mínimo de CRUD
 - El scaffolding debe incluir como mínimo:
@@ -66,6 +67,7 @@ Crear un módulo completo siguiendo la arquitectura del proyecto.
   - `infrastructure/http/controllers/dto/*.dto.ts`
   - `infrastructure/http/presenters/<entity>.presenter.ts`
 - Para filtros de listado, usar Query DTO dedicado en `infrastructure/http/controllers/dto/find-<module>-query.dto.ts`.
+- No agregar paginación por defecto en listados; solo agregarla cuando el usuario la pida explícitamente.
 
 # Validación obligatoria al finalizar
 - Ejecutar una revisión final de naming en archivos generados.
