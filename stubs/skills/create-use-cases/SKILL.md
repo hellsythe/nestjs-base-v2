@@ -29,6 +29,9 @@ Agregar casos de uso claros y específicos.
 - No acoplar los casos de uso a Mongoose ni al controller.
 - Los casos de uso deben devolver entidades de dominio u output models de aplicación sin decoradores de framework.
 - No devolver DTOs HTTP (Swagger) desde la capa `application`.
+- Evitar lanzar `HttpException` de NestJS desde `application` para reglas de negocio.
+- Para errores de dominio, usar clases que hereden de `DomainError` desde `@sdkconsultoria/nestjs-base/shared/domain/errors/domain-error`.
+- Para errores de aplicación, usar clases que hereden de `ApplicationError` desde `@sdkconsultoria/nestjs-base/shared/application/errors/application-error`.
 - Los nombres de casos de uso, commands, queries y propiedades deben estar en inglés.
 - En modules CRUD, generar como mínimo estos casos de uso:
   - `CreateXUseCase`

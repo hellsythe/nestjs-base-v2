@@ -32,6 +32,7 @@ Crear un módulo completo siguiendo la arquitectura del proyecto.
 9. Usar `create-unit-tests`.
 10. Si el usuario pide E2E con BDD, usar `create-cucumber-e2e-tests`.
 11. Si el usuario pide paginación en listados, usar `create-pagination`.
+12. Si el usuario pide errores personalizados, usar `create-errors`.
 
 # Alcance mínimo de CRUD
 - El scaffolding debe incluir como mínimo:

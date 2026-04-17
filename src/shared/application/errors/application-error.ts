@@ -1,0 +1,9 @@
+export abstract class ApplicationError extends Error {
+  abstract readonly type: string;
+  abstract readonly title: string;
+  abstract readonly status: number;
+
+  protected constructor(message: string) {
+    super(message);
+  }
+}

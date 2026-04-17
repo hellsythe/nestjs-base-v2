@@ -5,4 +5,5 @@ export interface ProblemDetails {
   detail: string;
   instance?: string;
   errors?: string[];
+  transactionId?: string;
 }
