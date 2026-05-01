@@ -4,18 +4,24 @@ description: Agrega paginación opcional a endpoints de listado cuando el usuari
 ---
 
 # Cuándo usar esta skill
+
 Usar esta skill cuando:
+
 - El usuario pida paginación para listados.
 - El endpoint `GET` de listado deba responder `data + meta`.
 - Se necesite aplicar `page` y `perPage` en query params.
 
 # Cuándo no usar esta skill
+
 No usar esta skill cuando:
+
 - El usuario no haya pedido paginación.
 - El listado deba mantenerse simple (array) por compatibilidad.
 
 # Objetivo
+
 Implementar paginación end-to-end en módulo existente:
+
 - controller + DTO de query
 - use-case
 - contrato de repositorio
@@ -24,8 +30,9 @@ Implementar paginación end-to-end en módulo existente:
 - tests unitarios afectados
 
 # Reglas
+
 - Solo aplicar paginación si el usuario la pide explícitamente.
-- Reutilizar shared de `@sdkconsultoria/nestjs-base`:
+- Reutilizar utilidades de `src/share`:
   - `PaginationOptions`
   - `PaginationResult`
   - `findPaginatedResultRaw(...)` (en repositorio mongo)
@@ -36,6 +43,7 @@ Implementar paginación end-to-end en módulo existente:
 - Mantener naming en inglés.
 
 # Checklist mínimo
+
 - Query DTO actualizado con `page` y `perPage`.
 - Use-case de listado devuelve `PaginationResult<Entity>`.
 - Repositorio de dominio define método paginado.
@@ -45,5 +53,6 @@ Implementar paginación end-to-end en módulo existente:
 - Tests de use-case/controller/repository/presenter actualizados.
 
 # Validación
+
 - Ejecutar tests unitarios del módulo.
 - Validar build TypeScript.

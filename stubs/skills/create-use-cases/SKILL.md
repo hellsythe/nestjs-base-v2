@@ -4,21 +4,27 @@ description: Crea los casos de uso base del module en la capa de aplicación.
 ---
 
 # Cuándo usar esta skill
+
 Usar esta skill cuando:
+
 - Se cree un module nuevo.
 - Se necesiten acciones de aplicación como crear, actualizar, consultar o eliminar.
 - Se requiera encapsular lógica de negocio en la capa de aplicación.
 
 # Cuándo no usar esta skill
+
 No usar esta skill cuando:
+
 - Solo se quiere crear estructura de carpetas.
 - El cambio es exclusivamente de persistencia o schema.
 - Solo se modifica un DTO o una ruta sin impacto de negocio.
 
 # Objetivo
+
 Agregar casos de uso claros y específicos.
 
 # Reglas
+
 - Un caso de uso por acción relevante.
 - Inyectar dependencias mediante abstracciones.
 - Cada caso de uso debe exponer un único método público `execute`.
@@ -46,6 +52,7 @@ Agregar casos de uso claros y específicos.
 - `GetXsQuery` debe mapearse desde un Query DTO HTTP dedicado (`Find<Module>QueryDto`).
 
 # Ejemplo mínimo
+
 ```ts
 // create-user.use-case.ts
 async execute(command: CreateUserCommand): Promise<UserSnapshot> { /* ... */ }
@@ -55,6 +62,7 @@ async execute(query: GetUsersQuery): Promise<UserSnapshot[]> { /* ... */ }
 ```
 
 # Golden template (list use case)
+
 ```ts
 @Injectable()
 export class GetUsersUseCase {

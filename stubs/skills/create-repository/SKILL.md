@@ -4,23 +4,30 @@ description: Define el contrato del repositorio y la implementación concreta de
 ---
 
 # Cuándo usar esta skill
+
 Usar esta skill cuando:
+
 - Se necesite persistir una nueva entidad.
 - Se cree un module nuevo con acceso a base de datos.
 - Se requiera una abstracción de repositorio alineada con arquitectura limpia.
 
 # Cuándo no usar esta skill
+
 No usar esta skill cuando:
+
 - El module no tiene persistencia.
 - Solo se agrega lógica de aplicación sin tocar acceso a datos.
 - El cambio es únicamente de controller o DTOs.
 
 # Objetivo
+
 Crear:
+
 - interfaz de repositorio en dominio o aplicación
 - implementación en infraestructura
 
 # Reglas
+
 - El repositorio debe devolver entidades.
 - No devolver DTOs ni schemas.
 - La implementación concreta usa mappers para traducir datos.
@@ -30,6 +37,7 @@ Crear:
 - Debe usar `findOneRaw`, `findManyRaw`, `insertRaw`, `updateByIdRaw`, `softDeleteRaw` de la base siempre que aplique.
 - Debe exponer `findByCriteria(criteria)` y resolverlo con `MongoCriteriaBuilder` + `<entity>.filter-map.ts`.
 - Las bases `MongoRepositoryBase` y `MongoCriteriaBuilder` deben importarse desde `@sdkconsultoria/nestjs-base/shared/infrastructure/persistence/mongo/...`.
+- El tipado de filtros (`CriteriaFilterMap`, `FieldFilterConfig`) debe importarse desde `@sdkconsultoria/nestjs-base/shared/infrastructure/persistence/filter-operator`.
 - Definir el contrato del repositorio directamente en `domain/<entity>.repository.ts` (sin carpeta `domain/repositories`).
 - El nombre del repositorio, metodos y contratos debe estar en inglés.
 - Definir token de inyección con `Symbol` en el archivo de contrato del repositorio, por ejemplo:
@@ -45,6 +53,7 @@ Crear:
 - Si el usuario pide paginación, agregar contrato paginado (ej: `findByCriteriaPaginated(criteria, options)`) y usar `findPaginatedResultRaw(...)` en la implementación.
 
 # Ejemplo mínimo
+
 ```ts
 // domain/user.repository.ts
 export const USER_REPOSITORY = Symbol('USER_REPOSITORY');
@@ -56,9 +65,11 @@ export interface UserRepository {
 ```
 
 # Golden template (mongo repository)
+
 ```ts
 import { MongoCriteriaBuilder } from '@sdkconsultoria/nestjs-base/shared/infrastructure/persistence/mongo/mongo-criteria.builder';
 import { MongoRepositoryBase } from '@sdkconsultoria/nestjs-base/shared/infrastructure/persistence/mongo/mongo.repository.base';
+import type { CriteriaFilterMap } from '@sdkconsultoria/nestjs-base/shared/infrastructure/persistence/filter-operator';
 
 @Injectable()
 export class MongoUserRepository

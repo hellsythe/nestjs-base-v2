@@ -4,23 +4,29 @@ description: Orquesta la creación completa de un module NestJS usando las skill
 ---
 
 # Cuándo usar esta skill
+
 Usar esta skill cuando:
+
 - El usuario pida crear un módulo completo desde cero.
 - Se requiera scaffolding completo de un recurso nuevo.
 - Se necesite generar varias partes del module en una sola tarea.
 - Se invoque el comando `/module`.
 
 # Cuándo no usar esta skill
+
 No usar esta skill cuando:
+
 - Solo se necesita agregar un endpoint puntual.
 - Solo se necesita modificar la entidad.
 - Solo se necesita agregar un filtro o un caso de uso específico.
 - El trabajo afecta una sola capa y no requiere scaffolding completo.
 
 # Objetivo
+
 Crear un módulo completo siguiendo la arquitectura del proyecto.
 
 # Proceso obligatorio
+
 1. Usar `create-module`.
 2. Usar `create-entity`.
 3. Usar `add-audit-fields`.
@@ -29,12 +35,15 @@ Crear un módulo completo siguiendo la arquitectura del proyecto.
 6. Usar `create-mapper`.
 7. Usar `create-use-cases`.
 8. Usar `create-controller`.
-9. Usar `create-unit-tests`.
-10. Si el usuario pide E2E con BDD, usar `create-cucumber-e2e-tests`.
-11. Si el usuario pide paginación en listados, usar `create-pagination`.
-12. Si el usuario pide errores personalizados, usar `create-errors`.
+9. Si el módulo consume APIs externas o requiere integraciones HTTP, usar `create-external-adapters`.
+10. Si la integración externa requiere orquestación entre adapters, usar `create-application-services`.
+11. Usar `create-unit-tests`.
+12. Si el usuario pide E2E con BDD, usar `create-cucumber-e2e-tests`.
+13. Si el usuario pide paginación en listados, usar `create-pagination`.
+14. Si el usuario pide errores personalizados, usar `create-errors`.
 
 # Alcance mínimo de CRUD
+
 - El scaffolding debe incluir como mínimo:
   - `create`
   - `findAll`
@@ -43,6 +52,7 @@ Crear un módulo completo siguiendo la arquitectura del proyecto.
   - `delete` (soft delete cuando aplique)
 
 # Reglas
+
 - No omitir pasos.
 - Mantener consistencia de nombres.
 - Usar inglés en nombres de módulos, clases, archivos, rutas y propiedades (ej: `students`, `enrollment`, `updatedBy`).
@@ -50,6 +60,12 @@ Crear un módulo completo siguiendo la arquitectura del proyecto.
 - Respetar `AGENTS.md`.
 - No crear archivos fuera del scaffolding del proyecto.
 - Si hay integración externa, crear puerto en `application/ports` y adapter en infraestructura según protocolo.
+- Si hay integración externa, invocar explícitamente `create-external-adapters` después de `create-controller` y antes de tests.
+- Si hay orquestación entre múltiples adapters externos, invocar `create-application-services` y ubicar esa lógica en `application/services`.
+- Cuando se invoque `create-external-adapters`, validar separación de responsabilidades:
+  - `infrastructure/http/adapters/*` para adapters que implementan puertos.
+  - Agrupar cada integración en su propia carpeta de capacidad (`infrastructure/http/adapters/<capability>`).
+  - Ubicar mappers/tipos auxiliares dentro de la misma capacidad (`.../<capability>/mappers`).
 - Los controllers y DTOs generados deben incluir validación con `class-validator` y documentación con `@nestjs/swagger`.
 - Las respuestas HTTP deben mapearse con presenter en `infrastructure/http/presenters`.
 - Los casos de uso generados deben exponer método público `execute`.
@@ -61,8 +77,7 @@ Crear un módulo completo siguiendo la arquitectura del proyecto.
 - La persistencia Mongo debe vivir en `infrastructure/persistence/mongo` (schema y repository).
 - El nombre del repository Mongo debe seguir `<entity>.mongo.repository.ts`.
 - No crear carpeta `infrastructure/repositories`.
-- Todas las bases shared deben importarse desde `@sdkconsultoria/nestjs-base` (ej: `@sdkconsultoria/nestjs-base/shared/...`).
-- No usar `src/shared` local para utilidades base del framework.
+- Todas las bases de infraestructura común deben importarse desde `@sdkconsultoria/nestjs-base/shared/...`.
 - La capa HTTP debe seguir esta estructura:
   - `infrastructure/http/controllers/<module>.controller.ts`
   - `infrastructure/http/controllers/dto/*.dto.ts`
@@ -71,6 +86,7 @@ Crear un módulo completo siguiendo la arquitectura del proyecto.
 - No agregar paginación por defecto en listados; solo agregarla cuando el usuario la pida explícitamente.
 
 # Validación obligatoria al finalizar
+
 - Ejecutar una revisión final de naming en archivos generados.
 - Confirmar que nombres de módulos, clases, funciones, rutas, DTOs y propiedades estén en inglés.
 - Si se detecta español, renombrar y corregir referencias antes de finalizar.
@@ -80,6 +96,7 @@ Crear un módulo completo siguiendo la arquitectura del proyecto.
 - Si se genera Cucumber E2E, validar scripts `test:cucumber` y (si aplica) `test:cucumber:full`.
 
 # Ejemplo mínimo
+
 - Módulo `users` con escritura y lectura básica:
   1. `create-module`
   2. `create-entity`
@@ -91,6 +108,7 @@ Crear un módulo completo siguiendo la arquitectura del proyecto.
   8. `create-controller` (`POST /users`, `GET /users`)
 
 # Arbol esperado final
+
 ```txt
 <module>/
   <module>.module.ts
@@ -120,4 +138,10 @@ Crear un módulo completo siguiendo la arquitectura del proyecto.
           find-<module>-query.dto.ts
       presenters/
         <entity>.presenter.ts
+      adapters/
+        <capability>/
+          <capability>-http.adapter.ts
+          mappers/
+            *.mapper.ts
+            types.ts
 ```

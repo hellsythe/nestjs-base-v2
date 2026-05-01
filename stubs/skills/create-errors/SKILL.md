@@ -4,31 +4,39 @@ description: Crea errores personalizados de dominio y aplicación alineados a RF
 ---
 
 # Cuándo usar esta skill
+
 Usar esta skill cuando:
+
 - El usuario pida errores personalizados de negocio.
 - Un caso de uso requiera errores semánticos reutilizables.
 - Se necesite tipificar errores por módulo.
 
 # Cuándo no usar esta skill
+
 No usar esta skill cuando:
+
 - El error sea técnico/transitorio de infraestructura.
 - Solo se necesite un mensaje local sin reutilización.
 
 # Objetivo
+
 Definir clases de error claras por capa:
+
 - Dominio: invariantes de negocio.
 - Aplicación: reglas de orquestación/contexto del caso de uso.
 
 # Reglas
+
 - Errores de dominio deben heredar de:
-  - `@sdkconsultoria/nestjs-base/shared/domain/errors/domain-error`
+- `@sdkconsultoria/nestjs-base/shared/domain/errors/domain-error`
 - Errores de aplicación deben heredar de:
-  - `@sdkconsultoria/nestjs-base/shared/application/errors/application-error`
+- `@sdkconsultoria/nestjs-base/shared/application/errors/application-error`
 - Mantener nombres en inglés y específicos (ej: `StudentEnrollmentAlreadyExistsError`).
 - Evitar lanzar `HttpException` en capa dominio/aplicación para reglas de negocio.
 - Mantener `type` RFC7807 estable por error (URI única por tipo).
 
 # Estructura sugerida
+
 ```txt
 <module>/
   domain/
@@ -40,6 +48,7 @@ Definir clases de error claras por capa:
 ```
 
 # Plantilla mínima
+
 ```ts
 import { DomainError } from '@sdkconsultoria/nestjs-base/shared/domain/errors/domain-error';
 
