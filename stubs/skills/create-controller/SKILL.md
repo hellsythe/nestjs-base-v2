@@ -41,6 +41,7 @@ Exponer endpoints del module.
 - En `GET /<module>`, exponer filtros opcionales vía query params tipados (ej: `name`).
 - Documentar filtros en el Query DTO con `@ApiPropertyOptional` y mapearlos a `Get<Module>Query`.
 - Cuando haya uno o más filtros, usar un Query DTO dedicado (ej: `find-<module>-query.dto.ts`) con `@Query()` en el controller.
+- Si el endpoint de listado es paginado, usar DTO de respuesta paginada con `meta` tipado por `PaginationMetaDto` importado desde `@sdkconsultoria/nestjs-base/shared/infrastructure/http/dto/pagination-meta.dto`.
 - Evitar múltiples parámetros inline tipo `@Query('x') x?: ...` para mantener firmas limpias.
 
 # Ejemplo mínimo
