@@ -33,6 +33,8 @@ rm -rf "$PROJECT_NAME/.git"
 git init -b main "$PROJECT_NAME" >/dev/null
 
 ABS_PROJECT_PATH="$(realpath "$PROJECT_NAME")"
+HOST_UID="$(id -u)"
+HOST_GID="$(id -g)"
 
 INJECT_SCRIPTS_NODE=$(cat <<'NODESCRIPT'
 const fs = require("fs");
@@ -56,7 +58,7 @@ NODESCRIPT
 )
 
 printf 'Installing dependencies and bootstrap tooling in Docker (%s)...\n' "$NODE_IMAGE"
-docker run --rm -v "$ABS_PROJECT_PATH:/workspace" -w /workspace "$NODE_IMAGE" bash -lc "
+docker run --rm --user "$HOST_UID:$HOST_GID" -v "$ABS_PROJECT_PATH:/workspace" -w /workspace "$NODE_IMAGE" bash -lc "
   set -euo pipefail
   corepack enable
   corepack prepare pnpm@${PNPM_VERSION} --activate
@@ -72,7 +74,7 @@ git -C "$PROJECT_NAME" add .
 git -C "$PROJECT_NAME" -c user.name="SDK Consultoria Bootstrap" -c user.email="bootstrap@sdkconsultoria.local" commit -m "$COMMIT_MESSAGE" >/dev/null
 
 printf 'Running @sdkconsultoria/nestjs-base bootstrap commands...\n'
-docker run --rm -v "$ABS_PROJECT_PATH:/workspace" -w /workspace "$NODE_IMAGE" bash -lc "
+docker run --rm --user "$HOST_UID:$HOST_GID" -v "$ABS_PROJECT_PATH:/workspace" -w /workspace "$NODE_IMAGE" bash -lc "
   set -euo pipefail
   corepack enable
   corepack prepare pnpm@${PNPM_VERSION} --activate
