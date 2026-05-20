@@ -58,7 +58,7 @@ NODESCRIPT
 )
 
 printf 'Installing dependencies and bootstrap tooling in Docker (%s)...\n' "$NODE_IMAGE"
-docker run --rm --user "$HOST_UID:$HOST_GID" -v "$ABS_PROJECT_PATH:/workspace" -w /workspace "$NODE_IMAGE" bash -lc "
+docker run --rm -v "$ABS_PROJECT_PATH:/workspace" -w /workspace "$NODE_IMAGE" bash -lc "
   set -euo pipefail
   corepack enable
   corepack prepare pnpm@${PNPM_VERSION} --activate
@@ -67,6 +67,8 @@ docker run --rm --user "$HOST_UID:$HOST_GID" -v "$ABS_PROJECT_PATH:/workspace" -
   pnpm add '$PACKAGE_NAME'
 
   echo '${INJECT_SCRIPTS_NODE}' | node -
+
+  chown -R ${HOST_UID}:${HOST_GID} /workspace
 "
 
 printf 'Creating first commit...\n'
@@ -74,7 +76,7 @@ git -C "$PROJECT_NAME" add .
 git -C "$PROJECT_NAME" -c user.name="SDK Consultoria Bootstrap" -c user.email="bootstrap@sdkconsultoria.local" commit -m "$COMMIT_MESSAGE" >/dev/null
 
 printf 'Running @sdkconsultoria/nestjs-base bootstrap commands...\n'
-docker run --rm --user "$HOST_UID:$HOST_GID" -v "$ABS_PROJECT_PATH:/workspace" -w /workspace "$NODE_IMAGE" bash -lc "
+docker run --rm -v "$ABS_PROJECT_PATH:/workspace" -w /workspace "$NODE_IMAGE" bash -lc "
   set -euo pipefail
   corepack enable
   corepack prepare pnpm@${PNPM_VERSION} --activate
@@ -87,6 +89,8 @@ docker run --rm --user "$HOST_UID:$HOST_GID" -v "$ABS_PROJECT_PATH:/workspace" -
   pnpm exec ia-git-hooks-install
   pnpm exec ia-nest-clean-demo
   pnpm exec ia-shared-cleanup
+
+  chown -R ${HOST_UID}:${HOST_GID} /workspace
 "
 
 if ! git -C "$PROJECT_NAME" diff --quiet || ! git -C "$PROJECT_NAME" diff --cached --quiet; then
