@@ -34,6 +34,27 @@ git init -b main "$PROJECT_NAME" >/dev/null
 
 ABS_PROJECT_PATH="$(realpath "$PROJECT_NAME")"
 
+INJECT_SCRIPTS_NODE=$(cat <<'NODESCRIPT'
+const fs = require("fs");
+const pkgPath = "package.json";
+const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
+pkg.scripts = {
+  ...(pkg.scripts || {}),
+  "containers:install": "ia-containers-install",
+  "env:install": "ia-env-install",
+  "git:hooks:install": "ia-git-hooks-install",
+  "nest:clean-demo": "ia-nest-clean-demo",
+  "opencode:install": "ia-opencode-install",
+  "observability:install": "ia-observability-install",
+  "shared:cleanup": "ia-shared-cleanup",
+  "skills:install": "ia-opencode-install",
+  "testcontainers:install": "ia-testcontainers-install",
+  "project:bootstrap": "pnpm run opencode:install && pnpm run containers:install && pnpm run env:install && pnpm run observability:install && pnpm run testcontainers:install && pnpm run git:hooks:install && pnpm run nest:clean-demo && pnpm run shared:cleanup"
+};
+fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + "\n");
+NODESCRIPT
+)
+
 printf 'Installing dependencies and bootstrap tooling in Docker (%s)...\n' "$NODE_IMAGE"
 docker run --rm -v "$ABS_PROJECT_PATH:/workspace" -w /workspace "$NODE_IMAGE" bash -lc "
   set -euo pipefail
@@ -43,26 +64,7 @@ docker run --rm -v "$ABS_PROJECT_PATH:/workspace" -w /workspace "$NODE_IMAGE" ba
   pnpm install
   pnpm add '$PACKAGE_NAME'
 
-  node -e '
-    const fs = require("fs");
-    const path = "package.json";
-    const pkg = JSON.parse(fs.readFileSync(path, "utf8"));
-    pkg.scripts = {
-      ...(pkg.scripts || {}),
-      "containers:install": "ia-containers-install",
-      "env:install": "ia-env-install",
-      "git:hooks:install": "ia-git-hooks-install",
-      "nest:clean-demo": "ia-nest-clean-demo",
-      "opencode:install": "ia-opencode-install",
-      "observability:install": "ia-observability-install",
-      "shared:cleanup": "ia-shared-cleanup",
-      "skills:install": "ia-opencode-install",
-      "testcontainers:install": "ia-testcontainers-install",
-      "project:bootstrap": "pnpm run opencode:install && pnpm run containers:install && pnpm run env:install && pnpm run observability:install && pnpm run testcontainers:install && pnpm run git:hooks:install && pnpm run nest:clean-demo && pnpm run shared:cleanup"
-    };
-    fs.writeFileSync(path, JSON.stringify(pkg, null, 2) + "\\n");
-  '
-
+  echo '${INJECT_SCRIPTS_NODE}' | node -
 "
 
 printf 'Creating first commit...\n'
