@@ -5,7 +5,8 @@ set -euo pipefail
 TEMPLATE_REPO="https://github.com/nestjs/typescript-starter.git"
 PROJECT_NAME="${1:-nestjs-app}"
 PACKAGE_NAME="${2:-@sdkconsultoria/nestjs-base@latest}"
-NODE_IMAGE="${NODE_IMAGE:-node:20-bookworm}"
+PNPM_VERSION="${PNPM_VERSION:-9}"
+NODE_IMAGE="${NODE_IMAGE:-node:24-bookworm}"
 COMMIT_MESSAGE="${COMMIT_MESSAGE:-chore: bootstrap project from Nest starter + @sdkconsultoria/nestjs-base}"
 BOOTSTRAP_COMMIT_MESSAGE="${BOOTSTRAP_COMMIT_MESSAGE:-chore: apply @sdkconsultoria/nestjs-base bootstrap}"
 
@@ -37,7 +38,7 @@ printf 'Installing dependencies and bootstrap tooling in Docker (%s)...\n' "$NOD
 docker run --rm -v "$ABS_PROJECT_PATH:/workspace" -w /workspace "$NODE_IMAGE" bash -lc "
   set -euo pipefail
   corepack enable
-  corepack prepare pnpm@latest --activate
+  corepack prepare pnpm@${PNPM_VERSION} --activate
 
   pnpm install
   pnpm add '$PACKAGE_NAME'
@@ -72,7 +73,7 @@ printf 'Running @sdkconsultoria/nestjs-base bootstrap commands...\n'
 docker run --rm -v "$ABS_PROJECT_PATH:/workspace" -w /workspace "$NODE_IMAGE" bash -lc "
   set -euo pipefail
   corepack enable
-  corepack prepare pnpm@latest --activate
+  corepack prepare pnpm@${PNPM_VERSION} --activate
 
   pnpm exec ia-opencode-install
   pnpm exec ia-containers-install
